@@ -1,28 +1,35 @@
 import matplotlib
-import matplotlib.pyplot as plt
 import pandas as pd
 matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 import seaborn as sns
-
-
-
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree, export_text
 from sklearn.metrics import accuracy_score
-
-
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+import sklearn.cluster as cluster
+import skfuzzy as fuzz
+from sklearn.cluster import DBSCAN
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+
 
 
 
 
 df = pd.read_csv("C:/Users/acer/Desktop/diabetes_prediction_dataset.csv")
+
+
+
 
 # ---------------------------------------Display the first 5 data records----------------------------
 pd.set_option('display.max_columns', None)
@@ -351,13 +358,13 @@ print(df.isnull().sum())
 
 
 # ---------------------------------------SVM----------------------------
-scaler = StandardScaler()
-scaled = scaler.fit(df.drop('diabetes',axis=1)).transform(df.drop('diabetes',axis=1))
-df_scaled = pd.DataFrame(scaled, columns=df.columns[:-1])
-df_scaled.head()
-x = df_scaled
-y = df['diabetes']
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=1)
+# scaler = StandardScaler()
+# scaled = scaler.fit(df.drop('diabetes',axis=1)).transform(df.drop('diabetes',axis=1))
+# df_scaled = pd.DataFrame(scaled, columns=df.columns[:-1])
+# df_scaled.head()
+# x = df_scaled
+# y = df['diabetes']
+# x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=1)
 
 # svc=SVC()
 # svc.fit(x_train, y_train)
@@ -432,3 +439,124 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_
 # plt.title('SVM with Sigmoid kernel')
 # plt.show()
 # print(classification_report(y_test, y_pred_sigmoid))
+
+
+
+
+
+# ---------------------------------------KNN----------------------------
+# X = df[['gender', 'age', 'hypertension', 'heart_disease', 'smoking_history',
+#        'bmi', 'HbA1c_level', 'blood_glucose_level']]
+# y = df["diabetes"]
+# x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+# knn = KNeighborsClassifier()
+# knn.fit(x_train, y_train)
+# KnnPredictions = knn.predict(x_test)
+# KnnAccuracy = accuracy_score(y_test, KnnPredictions)
+# print("Knn Accuracy: {:.3f}".format(KnnAccuracy))
+#
+# print(confusion_matrix(y_test, KnnPredictions))
+#
+# sns.heatmap(confusion_matrix(y_test, KnnPredictions),fmt ="d", annot = True, cmap = 'Blues')
+# plt.show()
+# print(classification_report(y_test, KnnPredictions))
+
+
+# ---------------------------------------Naive Bayes----------------------------
+# NB = GaussianNB()
+# NB.fit(x_train, y_train)
+# NBPredictions = NB.predict(x_test)
+# NBAccuracy = accuracy_score(y_test, NBPredictions)
+# print("Naive Bais Accuracy: {:.3f}".format(NBAccuracy))
+# print(confusion_matrix(y_test, NBPredictions))
+# sns.heatmap(confusion_matrix(y_test, NBPredictions),fmt ="d", annot = True, cmap = 'Reds')
+# plt.show()
+# print(classification_report(y_test, NBPredictions ))
+
+
+
+
+
+# ---------------------------------------K-Mean----------------------------
+X = df[['gender', 'age', 'hypertension', 'heart_disease', 'smoking_history',
+       'bmi', 'HbA1c_level', 'blood_glucose_level']]
+y = df["diabetes"]
+# Kmean = cluster.KMeans(n_clusters=10, n_init=10)
+# Kmean = Kmean.fit(X)
+# SSE = Kmean.inertia_
+# df['Cluster'] = Kmean.labels_
+# print(f"SSE K-Means: {SSE}")
+# plt.scatter(X['age'], X['bmi'], c=df['Cluster'], cmap='viridis')
+# plt.title('K-Means Clustering')
+# plt.xlabel('Age')
+# plt.ylabel('BMI')
+# plt.show()
+
+
+
+
+# ---------------------------------------Fuzzy C-mean----------------------------
+# cntr, u, u0, d, jm, p, fpc = fuzz.cluster.cmeans(
+#     X.T, 10, 2, error=0.005, maxiter=100, init=None
+# )
+#
+# sse = 0.0
+# for i in range(len(X)):
+#     for j in range(10): #c
+#         sse += u[j, i] ** 2 * ((X.iloc[i] - cntr[j])**2).sum()
+#
+# print(f"SSE Fuzzy C-Mean: {sse}")
+# cluster_membership = pd.DataFrame(u.T, columns=[f'Cluster_{i+1}' for i in range(10)])#c
+# df['Cluster'] = cluster_membership.idxmax(axis=1)
+# plt.scatter(X['age'], X['bmi'], c=df['Cluster'].astype('category').cat.codes, cmap='viridis')
+# plt.title('Fuzzy C-Means Clustering')
+# plt.xlabel('Age')
+# plt.ylabel('BMI')
+# plt.show()
+
+
+
+
+# ---------------------------------------Density-based----------------------------
+# scaler = StandardScaler()
+# X_scaled = scaler.fit_transform(X)
+# epsilon = 0.5
+# min_samples = 2
+# dbscan = DBSCAN(eps=epsilon, min_samples=min_samples)
+# dbscan.fit(X_scaled)
+# df['dbscan_cluster'] = dbscan.labels_
+# plt.scatter(X['age'], X['bmi'], c=df['dbscan_cluster'], cmap='viridis')
+# plt.title('DBSCAN Clustering')
+# plt.xlabel('AGE')
+# plt.ylabel('BMI')
+# plt.show()
+
+
+# ---------------------------------------Hierarchical-Agglomerative----------------------------
+# x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+# train_df, test_df = train_test_split(df, test_size=0.3, random_state=1)
+# agg_cluster = AgglomerativeClustering(n_clusters=2)
+# labels = agg_cluster.fit_predict(x_test)
+# test_df['Cluster'] = labels
+#
+# plt.figure(figsize=(10, 20))
+# linkage_matrix = linkage(x_test, method='ward', metric='euclidean')
+# dendrogram(linkage_matrix, truncate_mode='level', p=2)
+# plt.title('Hierarchical Clustering Dendrogram')
+# plt.xlabel('Data points')
+# plt.ylabel('Distance')
+# plt.show()
+# plt.scatter(x_test['age'], x_test['bmi'], c=test_df['Cluster'], cmap='viridis')
+# plt.title('Agglomerative Clustering')
+# plt.xlabel('Age')
+# plt.ylabel('BMI')
+# plt.show()
+
+
+# ---------------------------------------Hierarchical-Divisive----------------------------
+# linkage_matrix = linkage(x_test, method='ward', metric='euclidean')
+# dendrogram(linkage_matrix, truncate_mode='level', p=2)
+# plt.title('Divisive Hierarchical Clustering Dendrogram')
+# plt.xlabel('Data points')
+# plt.ylabel('Distance')
+# plt.show()
